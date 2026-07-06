@@ -1,5 +1,6 @@
 import yfinance as yf
 import pandas as pd
+import numpy as np
 
 tickers = ["4151.T"
 ,"4502.T"
@@ -237,16 +238,41 @@ for ticker in tickers:
     data = {
         "Ticker": ticker.replace(".T", ""),
         "CompanyName": info.get("shortName", "N/A"),
-        "Price": info.get("currentPrice", "N/A"),
-        "PER": info.get("trailingPE", "N/A"),
-        "PBR": info.get("priceToBook", "N/A"),
-        "ROE": info.get("returnOnEquity", "N/A"),
-        "MarketCap_B_USD": info.get("marketCap", 0) / 1e9  # 转换为十亿单位
+        "Sector": info.get("sector", "N/A"),
+        "Industry": info.get("industry", "N/A"),
+        "Price": info.get("currentPrice", np.nan),
+        "PER": info.get("trailingPE", np.nan),
+        "ForwardPE": info.get("forwardPE", np.nan),
+        "PBR": info.get("priceToBook", np.nan),
+        "ROE": info.get("returnOnEquity", np.nan),
+        "MarketCap_B_USD": info.get("marketCap", 0) / 1e9
     }
     data_list.append(data)
     print(f"Processed: {ticker}")
 
-
 df = pd.DataFrame(data_list)
+
+
+# 3. core calculation: calculate average PER 
+def add_sector_benchmarks(df):
+    # 将 'N/A' 或 np.nan 视为有效数值前的处理：只对数值列计算平均
+    # 仅保留有效行业分组
+    valid_df = df[df['Sector'] != 'N/A'].copy()
+
+    # 计算每个 Sector 的平均 PER (忽略 NaN)
+    sector_means = valid_df.groupby('Sector')['PER'].mean().reset_index()
+    sector_means.rename(columns={'PER': 'Sector_Avg_PER'}, inplace=True)
+
+    # 将行业平均值合并回主表
+    df = pd.merge(df, sector_means, on='Sector', how='left')
+
+    # 四舍五入保留两位小数
+    df['Sector_Avg_PER'] = df['Sector_Avg_PER'].round(2)
+    return df
+
+
+df = add_sector_benchmarks(df)
+
+# 4. 保存为 CSV
 df.to_csv("Nikkei225_Live_Data.csv", index=False)
-print("CSV is created: Nikkei225_Live_Data.csv")
+
