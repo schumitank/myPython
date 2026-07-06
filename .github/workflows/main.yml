@@ -23,12 +23,12 @@ jobs:
           pip install yfinance pandas
 
       - name: Run script
-        run: python your_script_name.py # 将此处替换为你仓库里的 Python 文件名
+        run: python get_nikkie_225.py # 将此处替换为你仓库里的 Python 文件名
 
       - name: Commit and push changes
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
+          git config --global user.name 'schumitank'
+          git config --global user.email 'schumitank1981@163.com'
           git add Nikkei225_Live_Data.csv
           git commit -m "Update stock data"
           git push
