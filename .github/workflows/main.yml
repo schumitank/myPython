@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install yfinance pandas
+          pip install yfinance pandas numpy
 
       - name: Run script
         run: python get_nikkie_225.py # 将此处替换为你仓库里的 Python 文件名
