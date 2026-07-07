@@ -1,6 +1,9 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import os
+import shutil
+from datetime import datetime
 
 tickers = ["4151.T"
 ,"4502.T"
@@ -253,7 +256,7 @@ for ticker in tickers:
 df = pd.DataFrame(data_list)
 
 
-# 3. core calculation: calculate average PER 
+# 3. core calculation: calculate average PER
 def add_sector_benchmarks(df):
     # 将 'N/A' 或 np.nan 视为有效数值前的处理：只对数值列计算平均
     # 仅保留有效行业分组
@@ -273,6 +276,24 @@ def add_sector_benchmarks(df):
 
 df = add_sector_benchmarks(df)
 
-# 4. 保存为 CSV
-df.to_csv("Nikkei225_Live_Data.csv", index=False)
+# 1. 定义文件名
+main_file = "Nikkei225_Live_Data.csv"
+history_dir = "history"
+
+# 2. 确保 history 目录存在
+if not os.path.exists(history_dir):
+    os.makedirs(history_dir)
+
+# 3. 生成带日期的备份文件名 (例如: Nikkei225_Live_Data_2026-07-07.csv)
+date_str = datetime.now().strftime("%Y-%m-%d")
+backup_file = os.path.join(history_dir, f"Nikkei225_Live_Data_{date_str}.csv")
+
+# 4. 保存主文件 (latest)
+df.to_csv(main_file, index=False)
+
+# 5. 复制一份到 history 目录作为备份
+shutil.copy2(main_file, backup_file)
+
+print(f"数据已更新: {main_file}")
+print(f"备份已创建: {backup_file}")
 
