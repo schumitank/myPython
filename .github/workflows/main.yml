@@ -29,6 +29,6 @@ jobs:
         run: |
           git config --global user.name 'schumitank'
           git config --global user.email 'schumitank1981@163.com'
-          git add Nikkei225_Live_Data.csv
-          git commit -m "Update stock data"
+          git add .
+          git commit -m "Update daily stock data and history backup"
           git push
