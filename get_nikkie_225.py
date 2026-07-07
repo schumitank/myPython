@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import os
 import shutil
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 
 tickers = ["4151.T"
 ,"4502.T"
@@ -297,3 +298,25 @@ shutil.copy2(main_file, backup_file)
 print(f"数据已更新: {main_file}")
 print(f"备份已创建: {backup_file}")
 
+
+# 6. 自动清理 30 天以前的历史备份文件
+def clean_old_backups(history_dir, days_to_keep=30):
+    now = time.time()
+    # 计算 30 天前的截止时间戳
+    cutoff_time = now - (days_to_keep * 86400)
+
+    for filename in os.listdir(history_dir):
+        file_path = os.path.join(history_dir, filename)
+
+        # 确保只删除文件（避免误删文件夹）
+        if os.path.isfile(file_path):
+            # 获取文件最后修改时间
+            file_mtime = os.path.getmtime(file_path)
+
+            if file_mtime < cutoff_time:
+                os.remove(file_path)
+                print(f"已清理过期备份: {filename}")
+
+
+# 执行清理
+clean_old_backups(history_dir, days_to_keep=30)
