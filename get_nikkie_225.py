@@ -320,3 +320,9 @@ def clean_old_backups(history_dir, days_to_keep=30):
 
 # 执行清理
 clean_old_backups(history_dir, days_to_keep=30)
+
+# 在清理逻辑之后，生成索引
+with open("history_index.md", "w", encoding="utf-8") as f:
+    f.write("# 歴史データ一覧\n")
+    for filename in sorted(os.listdir(history_dir), reverse=True):
+        f.write(f"- {filename}\n")
