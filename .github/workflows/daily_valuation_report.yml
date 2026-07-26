@@ -28,7 +28,7 @@ jobs:
           pip install pandas numpy matplotlib
 
       - name: Generate valuation report
-        run: python scripts/generate_report.py
+        run: python generate_report.py
 
       - name: Commit and push report
         run: |
