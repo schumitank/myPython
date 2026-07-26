@@ -1,0 +1,39 @@
+name: Daily Nikkei Valuation Report
+
+on:
+  schedule:
+    # 每天 UTC 06:00 執行（日本時間 15:00，收盤後）
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # 也支援手動觸發
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 需要完整歷史來讀取過往數據
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy matplotlib
+
+      - name: Generate valuation report
+        run: python scripts/generate_report.py
+
+      - name: Commit and push report
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/reports/
+          git diff --cached --quiet || git commit -m "📊 Daily valuation report $(date +%Y%m%d)"
+          git push
