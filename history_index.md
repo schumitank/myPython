@@ -1,4 +1,5 @@
 # 歴史データ一覧
+- Nikkei225_Live_Data_2026-11-23.csv
 - Nikkei225_Live_Data_2026-11-22.csv
 - Nikkei225_Live_Data_2026-11-21.csv
 - Nikkei225_Live_Data_2026-11-20.csv
